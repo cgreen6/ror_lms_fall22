@@ -2,7 +2,7 @@ import { Container, Row, Col, Card } from 'react-bootstrap';
 
 const Team = () => (
   <Container>
-    <h1 className='text-center'>Team Members</h1>
+    <h1 className='text-center'>Our Instructors</h1>
     <Row>
       <Col md='3' sm='12'>
         <Card style={{ width: '18rem' }}>
