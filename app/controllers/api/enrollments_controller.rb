@@ -32,6 +32,11 @@ class Api::EnrollmentsController < ApplicationController
     render json: { message: 'Unenrolled' }
   end
 
+  def unenrolledUsers
+    @users = User.all - @course.users 
+    render json: @users
+  end
+
   private 
     def enrollment_params
       params.require(:enrollment).permit(:user_id)
