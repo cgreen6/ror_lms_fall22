@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import EnrollList from './EnrollList';
 import { useLocation } from 'react-router-dom';
 import { Modal, Button } from 'react-bootstrap';
@@ -13,6 +13,7 @@ const Enrollments = ({}) => {
   const { courseTitle } = location.state
   const [adding, setAdd] = useState(false)
   const [unenrolledUsers, setUsers] = useState([])
+  const navigate = useNavigate()
 
   useEffect( () => {
     axios.get(`/api/courses/${courseId}/enrollments`)
@@ -30,6 +31,28 @@ const Enrollments = ({}) => {
       .catch( err => console.log(err))
   }
 
+  const updateEnroll = (id, enrollment) => {
+    axios.put(`/api/courses/${courseId}/enrollments/${id}`, { enrollment })
+      .then( res => {
+        const newUpdatedEnrollments = enrollments.map( e => {
+          if (e.id == id) {
+            return res.data
+          }
+          return e
+        })
+        setEnrollments(newUpdatedEnrollments)
+        // navigate(`/${courseId}/enrollments`, { state: { courseTitle } })
+        window.location.reload()
+      })
+      .catch( err => console.log(err))
+  } 
+
+  const deleteEnroll = (id) => {
+    axios.delete(`/api/courses/${courseId}/enrollments/${id}`)
+      .then( res => setEnrollments( enrollments.filter( e => e.id !== id )))
+      .catch( err => console.log(err))
+  }
+
   return (
     <>
       <Button onClick={() => setAdd(true)}>
@@ -44,12 +67,16 @@ const Enrollments = ({}) => {
           <EnrollForm 
             addEnroll={addEnroll}
             unenrolledUsers={unenrolledUsers}
+            setAdd={setAdd}
           />
         </Modal.Body>
       </Modal>
       <h1>All Enrollments for the course {courseTitle}</h1>
       <EnrollList 
         enrollments={enrollments}
+        updateEnroll={updateEnroll}
+        unenrolledUsers={unenrolledUsers}
+        deleteEnroll={deleteEnroll}
       />
     </>
   )

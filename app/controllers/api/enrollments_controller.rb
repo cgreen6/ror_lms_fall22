@@ -1,6 +1,6 @@
 class Api::EnrollmentsController < ApplicationController
   before_action :set_course
-  before_action :set_enrollment, except: [:index, :create]
+  before_action :set_enrollment, except: [:index, :create, :unenrolledUsers]
 
   def index
     render json: @course.enrollments
